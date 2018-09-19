@@ -905,6 +905,10 @@ class OrgDataStructure(OrgElement):
         # TODO items one level down.
 
         def extract_from_level(content):
+            DEADLINE = 1
+            SCHEDULED = 2
+            CLOSED = 4
+
             for node in content:
                 # Check if it's a TODO item and add to results
                 try:
@@ -918,6 +922,14 @@ class OrgDataStructure(OrgElement):
                                            tags=node.tags,
                                            priority=node.priority,
                                            node=node)
+                        for element in node.content:
+                            if hasattr(element, 'type'):
+                                if element.type == SCHEDULED:
+                                    new_todo.scheduled = element
+                                if element.type == DEADLINE:
+                                    new_todo.deadline = element
+                                if element.type == CLOSED:
+                                    new_todo.closed = element
                         results_list.append(new_todo)
                 # Now check if it has sub-headings
                 try:
